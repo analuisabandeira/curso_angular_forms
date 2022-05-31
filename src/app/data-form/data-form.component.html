@@ -1,0 +1,187 @@
+<div class="container">
+  <form
+    class="row g-3 needs-validation"
+    novalidate
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="col-md-12 form-group">
+      <label for="nome" class="form-label">Nome:</label>
+      <input
+        type="text"
+        class="form-control"
+        id="nome"
+        placeholder="Nome"
+        formControlName="nome"
+        [ngClass]="onError('nome')"
+        [class.is-valid]="validFeedback('nome')"
+      />
+      <div class="valid-feedback">Looks good!</div>
+      <app-campo-control-erro
+        [displayError]="verificaValidTouched('nome')"
+        mensagemErro="Nome é obrigatório."
+        class="invalid-feedback"
+      >
+      </app-campo-control-erro>
+    </div>
+    <div class="col-md-12 form-group">
+      <label for="email" class="form-label">E-mail: </label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        placeholder="nome@email.com"
+        formControlName="email"
+        [ngClass]="onError('email')"
+        [class.is-valid]="validFeedback('email')"
+      />
+      <app-campo-control-erro
+        [displayError]="verificaValidTouched('email')"
+        mensagemErro="E-mail inválido."
+        class="invalid-feedback"
+      >
+      </app-campo-control-erro>
+      <div class="valid-feedback">Looks good!</div>
+    </div>
+
+    <div formGroupName="endereco">
+      <div class="form-group row g-3">
+        <div class="col-md-3">
+          <label for="cep" class="form-label">CEP:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="cep"
+            placeholder="00000-000"
+            formControlName="cep"
+            [ngClass]="onError('endereco.cep')"
+            [class.is-valid]="validFeedback('endereco.cep')"
+            (blur)="consultaCEP()"
+          />
+          <div class="valid-feedback">Looks good!</div>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('endereco.cep')"
+            mensagemErro="CEP é obrigatório."
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
+        </div>
+        <div class="col-md-3">
+          <label for="numero" class="form-label">Número:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="numero"
+            placeholder="Número"
+            formControlName="numero"
+            [ngClass]="onError('endereco.numero')"
+            [class.is-valid]="validFeedback('endereco.numero')"
+          />
+          <div class="valid-feedback">Looks good!</div>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('endereco.numero')"
+            mensagemErro="Número é obrigatório."
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
+        </div>
+        <div class="col-md-6">
+          <label for="complemento" class="form-label">Complemento:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="complemento"
+            placeholder="ex.: Casa A, Quadra X, etc."
+            formControlName="complemento"
+          />
+        </div>
+      </div>
+      <div class="form-group row g-3">
+        <div class="col-md-12">
+          <label for="rua" class="form-label">Rua:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="rua"
+            placeholder="R. das Araucárias"
+            formControlName="rua"
+            [ngClass]="onError('endereco.rua')"
+            [class.is-valid]="validFeedback('endereco.rua')"
+          />
+          <div class="valid-feedback">Looks good!</div>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('endereco.rua')"
+            mensagemErro="Rua é obrigatório."
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
+        </div>
+      </div>
+      <div class="form-group row g-3">
+        <div class="col-md-5">
+          <label for="bairro" class="form-label">Bairro:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="bairro"
+            placeholder="Mangabeira"
+            formControlName="bairro"
+            [ngClass]="onError('endereco.bairro')"
+            [class.is-valid]="validFeedback('endereco.bairro')"
+          />
+          <div class="valid-feedback">Looks good!</div>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('endereco.bairro')"
+            mensagemErro="Bairro é obrigatório."
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
+        </div>
+        <div class="col-md-4">
+          <label for="cidade" class="form-label">Cidade:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="cidade"
+            placeholder="João Pessoa"
+            formControlName="cidade"
+            [ngClass]="onError('endereco.cidade')"
+            [class.is-valid]="validFeedback('endereco.cidade')"
+          />
+          <div class="valid-feedback">Looks good!</div>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('endereco.cidade')"
+            mensagemErro="Cidade é obrigatório."
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
+        </div>
+
+        <div class="col-md-3">
+          <label for="estado" class="form-label">Estado:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="estado"
+            placeholder="Paraíba"
+            formControlName="estado"
+            [ngClass]="onError('endereco.estado')"
+            [class.is-valid]="validFeedback('endereco.estado')"
+          />
+          <div class="valid-feedback">Looks good!</div>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('endereco.estado')"
+            mensagemErro="Estado é obrigatório."
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <button class="btn btn-primary" (click)="resetar()">Cancelar</button>
+    </div>
+    <app-form-debug [form]="form"></app-form-debug>
+  </form>
+</div>
