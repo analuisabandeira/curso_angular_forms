@@ -43,6 +43,25 @@
       </app-campo-control-erro>
       <div class="valid-feedback">Looks good!</div>
     </div>
+    <div class="col-md-12 form-group">
+      <label for="confirmarEmail" class="form-label">Confirmar e-mail: </label>
+      <input
+        type="email"
+        class="form-control"
+        id="confirmarEmail"
+        placeholder="nome@email.com"
+        formControlName="confirmarEmail"
+        [ngClass]="onError('confirmarEmail')"
+        [class.is-valid]="validFeedback('confirmarEmail')"
+      />
+      <app-campo-control-erro
+        [displayError]="form.get('confirmarEmail')?.hasError('equalsTo')"
+        mensagemErro="E-mails não são iguais!"
+        class="invalid-feedback"
+      >
+      </app-campo-control-erro>
+      <div class="valid-feedback">Looks good!</div>
+    </div>
 
     <div formGroupName="endereco">
       <div class="form-group row g-3">
@@ -60,8 +79,14 @@
           />
           <div class="valid-feedback">Looks good!</div>
           <app-campo-control-erro
-            [displayError]="verificaValidTouched('endereco.cep')"
+            [displayError]="form.get('endereco.cep')?.hasError('required')"
             mensagemErro="CEP é obrigatório."
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
+          <app-campo-control-erro
+            [displayError]="form.get('endereco.cep')?.hasError('cepInvalido')"
+            mensagemErro="CEP inválido!"
             class="invalid-feedback"
           >
           </app-campo-control-erro>
@@ -159,28 +184,118 @@
 
         <div class="col-md-3">
           <label for="estado" class="form-label">Estado:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="estado"
-            placeholder="Paraíba"
-            formControlName="estado"
-            [ngClass]="onError('endereco.estado')"
-            [class.is-valid]="validFeedback('endereco.estado')"
-          />
-          <div class="valid-feedback">Looks good!</div>
-          <app-campo-control-erro
+          <select class="form-control" id="estado" formControlName="estado">
+            <option
+              *ngFor="let estado of estados | async"
+              [value]="estado.sigla"
+            >
+              {{ estado.nome }}
+            </option>
+          </select>
+          <!-- <app-campo-control-erro
             [displayError]="verificaValidTouched('endereco.estado')"
             mensagemErro="Estado é obrigatório."
             class="invalid-feedback"
+          > -->
+          <!-- </app-campo-control-erro> -->
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row g-3">
+      <div class="col-md-4">
+        <label for="cargo" class="form-label">Cargo:</label>
+        <select
+          class="form-control"
+          id="cargo"
+          formControlName="cargo"
+          [compareWith]="compararCargos"
+        >
+          <option *ngFor="let cargo of cargos" [ngValue]="cargo">
+            {{ cargo.desc }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="tecnologias" class="form-label">Tecnologias:</label>
+        <select
+          multiple
+          class="form-control"
+          id="tecnologias"
+          formControlName="tecnologias"
+        >
+          <option
+            *ngFor="let tecnologia of tecnologias"
+            [value]="tecnologia.nome"
+          >
+            {{ tecnologia.desc }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <div>
+          <label for="newsletter" class="form-label">Newsletter:</label>
+        </div>
+        <div
+          id="newsletter"
+          class="form-check-inline"
+          *ngFor="let item of newsletterOp"
+        >
+          <label class="form-check-label">
+            <input
+              type="radio"
+              formControlName="newsletter"
+              [value]="item.valor"
+            />
+            {{ item.desc }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row g-3">
+      <div class="col-md-3">
+        <div class="checkbox" [ngClass]="onError('termos')">
+          <label class="checkbox-inline">
+            <input type="checkbox" formControlName="termos" /> Aceito os termos.
+          </label>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('termos')"
+            mensagemErro="Para utilizar nossos serviços, você precisa concordar com os termos de uso!"
           >
           </app-campo-control-erro>
         </div>
       </div>
+      <div class="col-md-9">
+        <label for="frameworks">Frameworks</label>
+        <div id="frameworks" class="row">
+          <div
+            class="checkbox col-sm-2"
+            [ngClass]="onError('frameworks')"
+            formArrayName="frameworks"
+            *ngFor="let item of getFormControls(); let i = index"
+          >
+            <label class="checkbox-inline">
+              <input type="checkbox" [formControlName]="i" />
+              {{ frameworks[i] }}
+            </label>
+            <app-campo-control-erro
+              [displayError]="verificaValidTouched('frameworks')"
+              mensagemErro="Selecione pelo menos uma opção!"
+            >
+            </app-campo-control-erro>
+          </div>
+        </div>
+      </div>
     </div>
+
     <div class="col-12">
       <button class="btn btn-primary" type="submit">Submit</button>
-      <button class="btn btn-primary" (click)="resetar()">Cancelar</button>
+      <button class="btn btn-default" (click)="resetar()">Cancelar</button>
+      <button class="btn btn-info" (click)="setarCargo()">Cargo</button>
+      <button class="btn btn-info" (click)="setarTecnologias()">
+        Tecnologia
+      </button>
     </div>
     <app-form-debug [form]="form"></app-form-debug>
   </form>

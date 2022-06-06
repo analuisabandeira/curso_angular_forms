@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { ConsultaCepService } from '../shared/services/consulta-cep.service';
 
 @Component({
   selector: 'app-template-form',
@@ -13,14 +14,16 @@ export class TemplateFormComponent implements OnInit {
     email: null,
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cepService: ConsultaCepService
+  ) {}
 
   ngOnInit(): void {}
 
   onSubmit(form: any) {
     this.http
       .post('enderecoServer/formUsuario', JSON.stringify(form.value))
-      .pipe(map((resposta: any) => resposta))
       .subscribe((dados) => {
         console.log(dados);
         form.form.reset();
@@ -41,19 +44,10 @@ export class TemplateFormComponent implements OnInit {
     //A variável cep só aceita números, sem dígitos.
     cep = cep.replace(/\D/g, '');
 
-    //Verifica se a variável cep é diferente de vazio
-    if (cep != '') {
-      let validaCEP = /^[0-9]{8}$/;
-
-      //Valida o formato do CEP
-      if (validaCEP.test(cep)) {
-        this.resetaForm(form);
-
-        this.http
-          .get(`//viacep.com.br/ws/${cep}/json/`)
-          .pipe(map((dados: any) => dados))
-          .subscribe((dados) => this.insereDadosForm(dados, form));
-      }
+    if (cep != null && cep !== '') {
+      this.cepService
+        .consultaCEP(cep)
+        .subscribe((dados) => this.insereDadosForm(dados, form));
     }
   }
 
