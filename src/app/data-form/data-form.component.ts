@@ -7,23 +7,33 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { Observable } from 'rxjs';
+import {
+  distinctUntilChanged,
+  empty,
+  EMPTY,
+  map,
+  Observable,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { FormValidations } from '../form-validations';
+import { BaseFormComponent } from '../shared/base-form/base-form.component';
+import { ICidade } from '../shared/models/cidades';
 
 import { IEstadoBr } from '../shared/models/estado-br';
 import { ConsultaCepService } from '../shared/services/consulta-cep.service';
 import { DropdownService } from '../shared/services/dropdown.service';
+import { VerificaEmailService } from './services/verifica-email.service';
 
 @Component({
   selector: 'app-data-form',
   templateUrl: './data-form.component.html',
   styleUrls: ['./data-form.component.scss'],
 })
-export class DataFormComponent implements OnInit {
-  form!: FormGroup;
-  // estados!: IEstadoBr[];
-  estados!: Observable<IEstadoBr[]>;
-
+export class DataFormComponent extends BaseFormComponent implements OnInit {
+  estados!: IEstadoBr[];
+  // estados!: Observable<IEstadoBr[]>;
+  cidades!: ICidade[];
   cargos!: any[];
   tecnologias!: any[];
   newsletterOp!: any[];
@@ -33,10 +43,13 @@ export class DataFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private http: HttpClient,
     private dropdownService: DropdownService,
-    private cepService: ConsultaCepService
-  ) {}
+    private cepService: ConsultaCepService,
+    private verificaEmailService: VerificaEmailService
+  ) {
+    super();
+  }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     // this.dropdownService.getEstadosBr().subscribe((dados) => {
     //   this.estados = dados;
     // });
@@ -46,7 +59,13 @@ export class DataFormComponent implements OnInit {
     //   email: new FormControl(null),
     // });
 
-    this.estados = this.dropdownService.getEstadosBr();
+    // this.verificaEmail.verificarEmail('email@email.com').subscribe();
+
+    // this.estados = this.dropdownService.getEstadosBr();
+
+    this.dropdownService
+      .getEstadosBr()
+      .subscribe((dados) => (this.estados = dados));
 
     this.cargos = this.dropdownService.getCargos();
 
@@ -63,7 +82,11 @@ export class DataFormComponent implements OnInit {
           Validators.maxLength(20),
         ],
       ],
-      email: [null, [Validators.required, Validators.email]],
+      email: [
+        null,
+        [Validators.required, Validators.email],
+        this.validarEmail.bind(this),
+      ],
       confirmarEmail: [null, FormValidations.equalsTo('email')],
       endereco: this.formBuilder.group({
         cep: [null, [Validators.required, FormValidations.cepValidator]],
@@ -80,11 +103,37 @@ export class DataFormComponent implements OnInit {
       termos: [null, Validators.pattern('true')],
       frameworks: this.buildFrameworks(),
     });
+
+    // console.log(this.form.get('nome')?.value);
+
+    this.form
+      .get('endereco.cep')
+      ?.statusChanges.pipe(
+        distinctUntilChanged(),
+        tap((value) => console.log('Status CEP', value)),
+        switchMap((status) =>
+          status === 'VALID'
+            ? this.cepService.consultaCEP(this.form.get('endereco.cep')?.value)
+            : EMPTY
+        )
+      )
+      .subscribe((dados) => (dados ? this.insereDadosForm(dados) : {}));
+
+    this.form
+      .get('endereco.estado')
+      ?.valueChanges.pipe(
+        tap((estado) => console.log('Novo estado: ', estado)),
+        map(estado => this.estados.filter(e => e.sigla === estado)),
+        map((estados) => estados && estados.length > 0 ? estados[0].id : EMPTY),
+        switchMap(estadoId => this.dropdownService.getCidades(Number(estadoId)))
+        )
+      .subscribe(cidades => this.cidades = cidades);
+     
+
+    // this.dropdownService.getCidades(8).subscribe(console.log);
   }
 
-  onSubmit() {
-    console.log(this.form);
-
+  submit() {
     let valueSubmit = Object.assign({}, this.form.value);
 
     valueSubmit = Object.assign(valueSubmit, {
@@ -93,63 +142,17 @@ export class DataFormComponent implements OnInit {
         .filter((v: any) => v !== null),
     });
 
-    console.log(valueSubmit);
-
-    if (this.form.valid) {
-      this.http
-        .post('https://httpbin.org/post', JSON.stringify(valueSubmit))
-        .subscribe(
-          (dados) => {
-            console.log(dados);
-            // Resetando o form
-            // this.form.reset();
-            // ou this.resetar();
-          },
-          (error: any) => alert('Erro!')
-        );
-    } else {
-      console.log('Form inválido!');
-      this.verificaValidacoesForm(this.form);
-    }
-  }
-
-  verificaValidacoesForm(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach((campo) => {
-      // console.log(campo);
-
-      const controle = formGroup.get(campo);
-      controle?.markAsDirty();
-
-      if (controle instanceof FormGroup) {
-        this.verificaValidacoesForm(controle);
-      }
-    });
-  }
-
-  resetar() {
-    this.form.reset();
-  }
-
-  verificaValidTouched(campo: string) {
-    // this.form.controls[campo];
-
-    return (
-      !this.form.get(campo)?.valid &&
-      !!(this.form.get(campo)?.touched || this.form.get(campo)?.dirty)
-    );
-  }
-
-  onError(campo: string) {
-    return {
-      'is-invalid': this.verificaValidTouched(campo),
-    };
-  }
-
-  validFeedback(campo: any) {
-    return (
-      this.form.get(campo)?.valid &&
-      (this.form.get(campo)?.touched || this.form.get(campo)?.dirty)
-    );
+    this.http
+      .post('https://httpbin.org/post', JSON.stringify(valueSubmit))
+      .subscribe(
+        (dados) => {
+          // console.log(dados);
+          // Resetando o form
+          // this.form.reset();
+          // ou this.resetar();
+        },
+        (error: any) => alert('Erro!')
+      );
   }
 
   consultaCEP() {
@@ -208,14 +211,28 @@ export class DataFormComponent implements OnInit {
   buildFrameworks() {
     const values = this.frameworks.map((framework) => new FormControl(false));
 
-    return this.formBuilder.array(values, FormValidations.requiredMinCheckbox(1));
+    return this.formBuilder.array(
+      values,
+      FormValidations.requiredMinCheckbox(1)
+    );
   }
 
   getFormControls() {
     const formArray = this.form.get('frameworks') as FormArray;
-
-    console.log(formArray);
-
+    // console.log(formArray);
     return formArray.controls;
+  }
+
+  validarEmail(formControl: FormControl) {
+    return this.verificaEmailService
+      .verificarEmail(formControl.value)
+      .pipe(
+        map((emailExiste) => (emailExiste ? { emailInvalido: true } : null))
+      );
+  }
+
+  getFormControl(controlName: string) {
+    const control = this.form.get(controlName) as FormControl;
+    return control;
   }
 }

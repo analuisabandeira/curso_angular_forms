@@ -1,0 +1,20 @@
+<div>
+  <label [attr.for]="id" class="form-label"> {{ label }} </label>
+  <input
+    class="form-control"
+    [type]="type"
+    [id]="id"
+    [placeholder]="placeholder"
+    [ngClass]="classeCss"
+    [readonly]="!!isReadOnly"
+    [(ngModel)]="value"
+    [class.is-valid]="validFeedback('id')"
+  />
+  <div class="valid-feedback">Looks good!</div>
+  <app-error-message
+    [control]="control"
+    [label]="id"
+    class="invalid-feedback"
+  >
+  </app-error-message>
+</div>

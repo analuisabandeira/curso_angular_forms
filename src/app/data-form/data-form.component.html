@@ -5,7 +5,18 @@
     [formGroup]="form"
     (ngSubmit)="onSubmit()"
   >
-    <div class="col-md-12 form-group">
+    <app-input-field
+      [classeCss]="onError('nome')"
+      id="nome"
+      label="Nome: "
+      placeholder="Nome"
+      type="text"
+      class="col-md-12"
+      formControlName="nome"
+      [control]="getFormControl('nome')"
+    >
+    </app-input-field>
+    <!-- <div class="col-md-12 form-group">
       <label for="nome" class="form-label">Nome:</label>
       <input
         type="text"
@@ -17,14 +28,21 @@
         [class.is-valid]="validFeedback('nome')"
       />
       <div class="valid-feedback">Looks good!</div>
-      <app-campo-control-erro
-        [displayError]="verificaValidTouched('nome')"
-        mensagemErro="Nome é obrigatório."
-        class="invalid-feedback"
-      >
-      </app-campo-control-erro>
-    </div>
-    <div class="col-md-12 form-group">
+      <app-error-message [control]="getFormControl('nome')" label="nome" class="invalid-feedback">
+      </app-error-message>
+    </div> -->
+    <app-input-field
+      [classeCss]="onError('email')"
+      id="email"
+      label="E-mail:"
+      placeholder="email@email.com"
+      type="email"
+      class="col-md-12"
+      formControlName="email"
+      [control]="getFormControl('email')"
+    >
+    </app-input-field>
+    <!-- <div class="col-md-12 form-group">
       <label for="email" class="form-label">E-mail: </label>
       <input
         type="email"
@@ -36,14 +54,38 @@
         [class.is-valid]="validFeedback('email')"
       />
       <app-campo-control-erro
+        [displayError]="form.get('email')?.status === 'PENDING'"
+        mensagemErro="Validando e-mail"
+        class="invalid-feedback"
+      >
+      </app-campo-control-erro>
+      <app-error-message
+        [control]="getFormControl('email')"
+        label="email"
+        class="invalid-feedback"
+      >
+      </app-error-message>
+
+      <app-campo-control-erro
         [displayError]="verificaValidTouched('email')"
         mensagemErro="E-mail inválido."
         class="invalid-feedback"
       >
       </app-campo-control-erro>
       <div class="valid-feedback">Looks good!</div>
-    </div>
-    <div class="col-md-12 form-group">
+    </div> -->
+    <app-input-field
+      [classeCss]="onError('confirmarEmail')"
+      id="confirmarEmail"
+      label="Confirmar e-mail:"
+      placeholder="email@email.com"
+      type="email"
+      class="col-md-12"
+      formControlName="confirmarEmail"
+      [control]="getFormControl('confirmarEmail')"
+    >
+    </app-input-field>
+    <!-- <div class="col-md-12 form-group">
       <label for="confirmarEmail" class="form-label">Confirmar e-mail: </label>
       <input
         type="email"
@@ -54,18 +96,27 @@
         [ngClass]="onError('confirmarEmail')"
         [class.is-valid]="validFeedback('confirmarEmail')"
       />
-      <app-campo-control-erro
-        [displayError]="form.get('confirmarEmail')?.hasError('equalsTo')"
-        mensagemErro="E-mails não são iguais!"
+      <app-error-message
+        [control]="getFormControl('confirmarEmail')"
         class="invalid-feedback"
       >
-      </app-campo-control-erro>
+      </app-error-message>
       <div class="valid-feedback">Looks good!</div>
-    </div>
-
+    </div> -->
     <div formGroupName="endereco">
       <div class="form-group row g-3">
-        <div class="col-md-3">
+        <app-input-field
+          class="col-md-3"
+          [classeCss]="onError('endereco.cep')"
+          id="cep"
+          label="CEP:"
+          placeholder="00000-000"
+          type="text"
+          formControlName="cep"
+          [control]="getFormControl('endereco.cep')"
+        >
+        </app-input-field>
+        <!-- <div class="col-md-3">
           <label for="cep" class="form-label">CEP:</label>
           <input
             type="text"
@@ -75,23 +126,27 @@
             formControlName="cep"
             [ngClass]="onError('endereco.cep')"
             [class.is-valid]="validFeedback('endereco.cep')"
-            (blur)="consultaCEP()"
           />
           <div class="valid-feedback">Looks good!</div>
-          <app-campo-control-erro
-            [displayError]="form.get('endereco.cep')?.hasError('required')"
-            mensagemErro="CEP é obrigatório."
+          <app-error-message
+            [control]="getFormControl('endereco.cep')"
+            label="CEP"
             class="invalid-feedback"
           >
-          </app-campo-control-erro>
-          <app-campo-control-erro
-            [displayError]="form.get('endereco.cep')?.hasError('cepInvalido')"
-            mensagemErro="CEP inválido!"
-            class="invalid-feedback"
-          >
-          </app-campo-control-erro>
-        </div>
-        <div class="col-md-3">
+          </app-error-message>
+        </div> -->
+        <app-input-field
+          class="col-md-3"
+          [classeCss]="onError('endereco.numero')"
+          id="numero"
+          label="Número:"
+          placeholder="Número"
+          type="text"
+          formControlName="numero"
+          [control]="getFormControl('endereco.numero')"
+        >
+        </app-input-field>
+        <!-- <div class="col-md-3">
           <label for="numero" class="form-label">Número:</label>
           <input
             type="text"
@@ -103,14 +158,25 @@
             [class.is-valid]="validFeedback('endereco.numero')"
           />
           <div class="valid-feedback">Looks good!</div>
-          <app-campo-control-erro
-            [displayError]="verificaValidTouched('endereco.numero')"
-            mensagemErro="Número é obrigatório."
+          <app-error-message
+            [control]="getFormControl('endereco.numero')"
+            label="número"
             class="invalid-feedback"
           >
-          </app-campo-control-erro>
-        </div>
-        <div class="col-md-6">
+          </app-error-message>
+        </div> -->
+        <app-input-field
+          class="col-md-6"
+          [classeCss]="onError('endereco.complemento')"
+          id="complemento"
+          label="Complemento:"
+          placeholder="ex.: Casa A, Quadra X, etc."
+          type="text"
+          formControlName="complemento"
+          [control]="getFormControl('endereco.complemento')"
+        >
+        </app-input-field>
+        <!-- <div class="col-md-6">
           <label for="complemento" class="form-label">Complemento:</label>
           <input
             type="text"
@@ -119,10 +185,20 @@
             placeholder="ex.: Casa A, Quadra X, etc."
             formControlName="complemento"
           />
-        </div>
+        </div> -->
       </div>
-      <div class="form-group row g-3">
-        <div class="col-md-12">
+      <app-input-field
+        class="col-md-12"
+        [classeCss]="onError('endereco.rua')"
+        id="rua"
+        label="Rua:"
+        placeholder="R. das Araucárias."
+        type="text"
+        formControlName="rua"
+        [control]="getFormControl('endereco.rua')"
+      >
+      </app-input-field>
+      <!-- <div class="col-md-12">
           <label for="rua" class="form-label">Rua:</label>
           <input
             type="text"
@@ -134,16 +210,26 @@
             [class.is-valid]="validFeedback('endereco.rua')"
           />
           <div class="valid-feedback">Looks good!</div>
-          <app-campo-control-erro
-            [displayError]="verificaValidTouched('endereco.rua')"
-            mensagemErro="Rua é obrigatório."
+          <app-error-message
+            [control]="getFormControl('endereco.rua')"
+            label="rua"
             class="invalid-feedback"
           >
-          </app-campo-control-erro>
-        </div>
-      </div>
+          </app-error-message>
+        </div> -->
       <div class="form-group row g-3">
-        <div class="col-md-5">
+        <app-input-field
+          class="col-md-5"
+          [classeCss]="onError('endereco.bairro')"
+          id="bairro"
+          label="Bairro:"
+          placeholder="ex.: Mangabeira."
+          type="text"
+          formControlName="bairro"
+          [control]="getFormControl('endereco.bairro')"
+        >
+        </app-input-field>
+        <!-- <div class="col-md-5">
           <label for="bairro" class="form-label">Bairro:</label>
           <input
             type="text"
@@ -155,14 +241,28 @@
             [class.is-valid]="validFeedback('endereco.bairro')"
           />
           <div class="valid-feedback">Looks good!</div>
-          <app-campo-control-erro
-            [displayError]="verificaValidTouched('endereco.bairro')"
-            mensagemErro="Bairro é obrigatório."
+          <app-error-message
+            [control]="getFormControl('endereco.bairro')"
+            label="bairro"
             class="invalid-feedback"
           >
-          </app-campo-control-erro>
-        </div>
+          </app-error-message>
+        </div> -->
         <div class="col-md-4">
+          <label for="cidade" class="form-label">Cidade:</label>
+          <select class="form-control" id="cidade" formControlName="cidade">
+            <option *ngFor="let cidade of cidades" [value]="cidade.nome">
+              {{ cidade.nome }}
+            </option>
+          </select>
+          <app-error-message
+            [control]="getFormControl('endereco.cidade')"
+            label="cidade"
+            class="invalid-feedback"
+          >
+          </app-error-message>
+        </div>
+        <!-- <div class="col-md-4">
           <label for="cidade" class="form-label">Cidade:</label>
           <input
             type="text"
@@ -174,34 +274,28 @@
             [class.is-valid]="validFeedback('endereco.cidade')"
           />
           <div class="valid-feedback">Looks good!</div>
-          <app-campo-control-erro
-            [displayError]="verificaValidTouched('endereco.cidade')"
-            mensagemErro="Cidade é obrigatório."
-            class="invalid-feedback"
+          <app-error-message
+            [control]="getFormControl('endereco.cidade')"
+            label="cidade"
           >
-          </app-campo-control-erro>
-        </div>
-
+          </app-error-message>
+        </div> -->
         <div class="col-md-3">
           <label for="estado" class="form-label">Estado:</label>
           <select class="form-control" id="estado" formControlName="estado">
-            <option
-              *ngFor="let estado of estados | async"
-              [value]="estado.sigla"
-            >
+            <option *ngFor="let estado of estados" [value]="estado.sigla">
               {{ estado.nome }}
             </option>
           </select>
-          <!-- <app-campo-control-erro
-            [displayError]="verificaValidTouched('endereco.estado')"
-            mensagemErro="Estado é obrigatório."
+          <app-error-message
+            [control]="getFormControl('endereco.estado')"
+            label="estado"
             class="invalid-feedback"
-          > -->
-          <!-- </app-campo-control-erro> -->
+          >
+          </app-error-message>
         </div>
       </div>
     </div>
-
     <div class="form-group row g-3">
       <div class="col-md-4">
         <label for="cargo" class="form-label">Cargo:</label>
@@ -252,7 +346,6 @@
         </div>
       </div>
     </div>
-
     <div class="form-group row g-3">
       <div class="col-md-3">
         <div class="checkbox" [ngClass]="onError('termos')">
@@ -262,6 +355,7 @@
           <app-campo-control-erro
             [displayError]="verificaValidTouched('termos')"
             mensagemErro="Para utilizar nossos serviços, você precisa concordar com os termos de uso!"
+            class="invalid-feedback"
           >
           </app-campo-control-erro>
         </div>
@@ -279,16 +373,16 @@
               <input type="checkbox" [formControlName]="i" />
               {{ frameworks[i] }}
             </label>
-            <app-campo-control-erro
-              [displayError]="verificaValidTouched('frameworks')"
-              mensagemErro="Selecione pelo menos uma opção!"
-            >
-            </app-campo-control-erro>
           </div>
+          <app-campo-control-erro
+            [displayError]="verificaValidTouched('frameworks')"
+            mensagemErro="Selecione pelo menos uma opção!"
+            class="invalid-feedback"
+          >
+          </app-campo-control-erro>
         </div>
       </div>
     </div>
-
     <div class="col-12">
       <button class="btn btn-primary" type="submit">Submit</button>
       <button class="btn btn-default" (click)="resetar()">Cancelar</button>
